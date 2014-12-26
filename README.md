@@ -20,16 +20,19 @@ Simple y functional, multi-payment system. Payment systems are extremely variabl
 	// Methods with use
 	getway.use( new PayPal({
 		api : 'My API',
-		secret : 'My secret'
+		secret : 'My secret',
+		succes : 'http://mydomain.com/coinbase/',
+		cancel : 'http://mydomain.com/pay'
 	}));
 
 	getway.use( new CoinBase({
 		api : 'My API',
-		secret : 'My secret'
+		secret : 'My secret',
+		succes : 'http://mydomain.com/coinbase/'
 	}));
 
 
-	app.use(getway.initialize());
+	app.use(getway.methods());
 	app.post('/paypal', getway.payment('paypal'), otherFunction );
 	app.get('/pay', function(req, res, next){
 		getway.create('paypal', {
@@ -44,3 +47,4 @@ Simple y functional, multi-payment system. Payment systems are extremely variabl
 		});
 	});
 
+This under construction !!
