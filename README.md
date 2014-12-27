@@ -6,41 +6,53 @@ Simple y functional, multi-payment system. Payment systems are extremely variabl
 ## Use
 
 	var gateway = require('gateway');
+	gateway.give(function(method, params, next){
+		// Give the Id
+		db.payment.find(params.id, function(err, doc){
+			next(err, doc.uuid);
+		});
+	});
+
+	gateway.request(function(method, payment, next){
+		// The payment just made
+		console.log(method, payment);
+		db.payment.findAndUpdate(payment.id, payment, function(err){
+			next(err);
+		});
+	});
+
+	// OPTIONAL
 	gateway.serialize( function(req, methods, next){
 		// What are the methods of payment for the user
 		next(methods);
 	});
 
-	getway.request(function(method, payment, next){
-		// The payment just made
-		console.log(method, payment);
-		next();
-	});
-
 	// Methods with use
-	getway.use( new PayPal({
+	gateway.use(PayPal({
 		api : 'My API',
 		secret : 'My secret',
-		succes : 'http://mydomain.com/coinbase/',
-		cancel : 'http://mydomain.com/pay'
+		succes : 'http://mydomain.com/:method/:id',
+		cancel : 'http://mydomain.com/pay',
+		showMethod : true
 	}));
 
-	getway.use( new CoinBase({
+	gateway.use(CoinBase({
 		api : 'My API',
 		secret : 'My secret',
-		succes : 'http://mydomain.com/coinbase/'
+		succes : 'http://mydomain.com/bitcoin/:id'
 	}));
 
 
-	app.use(getway.methods());
-	app.post('/paypal', getway.payment('paypal'), otherFunction );
+	app.use(gateway.methods());
+	app.post('/paypal', gateway.payment('paypal'), otherFunction );
 	app.get('/pay', function(req, res, next){
-		getway.create('paypal', {
+		gateway.create('paypal', {
 			title : 'Give the donate',
 			description : 'A donation',
 			amount : 10,
 			currency : 'USD',
-			tax : 0.1
+			tax : 0.1,
+			id : '--My Id --'
 		}, function(err, obj){
 			if(err) return next(err);
 			res.redirect(obj.link);
