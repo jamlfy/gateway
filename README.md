@@ -31,15 +31,19 @@ Simple y functional, multi-payment system. Payment systems are extremely variabl
 	gateway.use(PayPal({
 		api : 'My API',
 		secret : 'My secret',
-		succes : 'http://mydomain.com/:method/:id',
-		cancel : 'http://mydomain.com/pay',
+		url : {
+			success : 'http://mydomain.com/:method/:id',
+			cancel : 'http://mydomain.com/pay',	
+		},
 		showMethod : true
 	}));
 
 	gateway.use(CoinBase({
 		api : 'My API',
 		secret : 'My secret',
-		succes : 'http://mydomain.com/bitcoin/:id'
+		url : {
+			success : 'http://mydomain.com/bitcoin/:id'	
+		}
 	}));
 
 
